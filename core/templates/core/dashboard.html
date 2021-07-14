@@ -1,0 +1,10 @@
+
+{% block content %}
+	<h1>This line is from core/dashboard.html</h1>
+	items will be listed here <hr>
+	{% for item in items %}
+		<a href="{% url 'item-detail' item.slug %}">{{item.name}}</a> <br>
+		{{item.stock_quantity}}
+		<hr>
+	{% endfor %}
+{% endblock content%}

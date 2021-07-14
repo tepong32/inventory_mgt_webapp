@@ -1,0 +1,69 @@
+{% load static %}
+<!-- 
+  NOTE: This navigation bar is set to "expand at md" screen size. For more info, see: https://getbootstrap.com/docs/5.0/examples/navbars/.
+  Don't know how to use those examples? Right-click on that page and select "View page source" then copy the block of code you feel like using.
+ -->
+{% include 'nav/_css.html' %}
+ <nav class="navbar navbar-expand-md navbar-dark bg-black fixed-top p-0" aria-label="Main Navbar">
+  <video src="/media/defaults/fiery.mp4" autoplay muted style="position: absolute; object-fit: cover; width: 100%;height: 100%; z-index: -1;"></video>
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/"><img class="navLogo" src="/media/defaults/round.png">
+      <!-- <span class="quoteText"> teppy<small>.rocks</small></span> -->
+      <i class="titleFont">
+        <span>t</span>
+        <span>e</span>
+        <span>p</span>
+        <span>p</span>
+        <span>y</span>
+        <span>.</span>
+        <span>r</span>
+        <span>o</span>
+        <span>c</span>
+        <span>k</span>
+        <span>s</span>
+      </i>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-center" id="mainNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item">
+          <a class="nav-link" href="/forum"><b class="headerFontLink p-2">Forum</b></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/shareable"><b class="headerFontLink p-2">Free!</b></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/about"><b class="headerFontLink p-2">About</b></a>
+        </li>
+        
+      </ul>
+      <!-- This form is not working for user searching when no user is logged-in...so, I removed it. -->
+      <!-- <form class="search-bar justify-content-start mr-3" onsubmit="return executeQuery();">
+        <input type="text" class="form-control" name="q" id="nav-search-bar1" placeholder="User search...">
+      </form> -->
+      <div class="btn-group">
+        <button class="btn btn-dark quoteText">
+          <a href="/login">Log in</a>
+        </button>
+        <button class="btn btn-dark quoteText">
+          <a href="/register">Register</a>
+        </button>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- <script type="text/javascript">
+  function executeQuery() {
+    var query = ""
+    query = document.getElementById('nav-search-bar1').value;
+    window.location.replace("{% url 'user-search' %}?q=" + query)
+    return false
+  }
+
+</script> -->

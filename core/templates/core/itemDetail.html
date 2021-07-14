@@ -1,0 +1,17 @@
+{% block content %}
+	<h1>{{object.name}}</h1>
+	<div>
+		{{object.capital_price_per_piece}} <br>
+		{{object.stock_quantity}} <br>
+		{{object.capital_price_bulk}} <br>
+		{{object.supplier}}<hr>
+
+		<h3>Selling price references</h3>
+
+		{{object.discount}} <br>
+		{{object.sell_price_retail}} <br>
+		{{object.capital_price_bulk}} <br>
+
+	</div>
+	
+{% endblock content %}

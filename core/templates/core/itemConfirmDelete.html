@@ -1,0 +1,31 @@
+{% extends 'core/dashboard.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<hr />
+<div class="content-section" style="padding-top: 5em">
+  <form method="POST">
+    {% csrf_token %}
+    <!-- this is a required line for added security -->
+    <fieldset class="form-group">
+      <legend class="border-bottom mb-1"><b>Delete Item </b></legend>
+      <h3>
+        <i>Are you sure you want to delete the post:</i> <br />
+        "{{ object.title }}"?
+      </h3>
+      <h6><i>You cannot undo this action.</i></h6>
+    </fieldset>
+
+    <div class="form-group">
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'forum-home' %}">
+        I changed my mind.
+      </a>
+      <button class="btn btn-sm btn-outline-danger" type="submit">
+        Yes, Delete.
+      </button>
+    </div>
+  </form>
+</div>
+<hr />
+{% endblock content %}

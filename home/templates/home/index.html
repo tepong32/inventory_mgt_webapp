@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/>
+	<title>Inventory Management WebApp by tEppy</title>
+</head>
+<body>
+	<div style="min-height: 100vh;">
+		<h1>This line is from home/index.html</h1>
+		<section id='dashboard'>
+			{% block content %}
+
+				(dashboard overview here)
+				{% include 'core/dashboard.html' %}
+
+			{% endblock content %}
+		</section>
+	</div>
+	
+
+
+	
+	<footer>
+		{% include 'nav/footer.html' %}
+	</footer>
+</body>
+
+
+</html>
