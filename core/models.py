@@ -9,7 +9,7 @@ from django.utils.text import slugify
 
 class Item(models.Model):
 	owner = models.ForeignKey(User, on_delete=models.CASCADE)
-	name = models.CharField(max_length=100)
+	name = models.CharField(max_length=100, unique=True)
 	slug = models.SlugField(max_length=150, verbose_name=('Item Slug'), default=name)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
@@ -44,7 +44,7 @@ class Item(models.Model):
 
 	## thumbnail-related stuffs
 	def thumbnail_directory(instance, filename):
-		return 'users/{}/post_images/{}/header/{}'.format(instance.owner.username, instance.name, filename)
+		return 'users/{}/item_images/{}/{}'.format(instance.owner.username, instance.name, filename)
 	thumbnail_image = models.ImageField(null=True, blank=True, upload_to=thumbnail_directory)
 
 	def save(self, *args, **kwargs):

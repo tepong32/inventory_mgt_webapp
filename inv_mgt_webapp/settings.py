@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     ## third-party apps
+    'adminlte3',
+    'adminlte3_theme',
+
     'crispy_forms',
     'ckeditor',
     'ckeditor_uploader',
