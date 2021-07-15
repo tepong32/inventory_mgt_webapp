@@ -1,0 +1,43 @@
+{% extends 'core/dashboard.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container" style="padding-top: 2em">
+  <div class="col">
+    <div class="container" style="background-color: rgba(1, 0, 0, 0.2)">
+      <div class="content-section">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <!-- this is a required line for added security -->
+          <fieldset class="form-group">
+            <legend class="border-bottom mb-1">Add Item entry</legend>
+            
+              <!-- this block is equivalent to {{form.media}} {{form|crispy}} but was hard-coded -->
+              <div id="div_id_name" class="input-group">
+                <label for="id_name" class=" requiredField">Name<span class="asteriskField">*</span></label>
+                <div class="">
+                  <input type="text" name="name" maxlength="100" class="textinput textInput form-control" required id="id_name">
+                </div>
+              </div>
+              <div id="div_id_supplier" class="input-group">
+                <label for="id_supplier" class=" requiredField">Supplier<span class="asteriskField">*</span></label>
+                <div class="">
+                  <input type="text" name="supplier" value="---" maxlength="100" class="textinput textInput form-control" required id="id_supplier">
+                </div>
+              </div>
+              
+          </fieldset>
+
+          <div class="form-group">
+            <button class="btn btn-success" type="submit">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+
+
+

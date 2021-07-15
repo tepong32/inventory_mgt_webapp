@@ -9,10 +9,10 @@
     {% csrf_token %}
     <!-- this is a required line for added security -->
     <fieldset class="form-group">
-      <legend class="border-bottom mb-1"><b>Delete Item </b></legend>
+      <legend class="border-bottom mb-1"><b>Delete Purchase entry</b></legend>
       <h3>
-        <i>Are you sure you want to delete the post:</i> <br />
-        "{{ object.title }}"?
+        <i>Are you sure you want to delete :</i> <br />
+        "{{ object.name }} // {{object.purchase_date}}"?
       </h3>
       <h6><i>You cannot undo this action.</i></h6>
     </fieldset>

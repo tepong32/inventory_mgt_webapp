@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
-from .forms import AddPurchaseItemForm, AddSellItemForm
+from .forms import AddItemForm, AddPurchaseItemForm, AddSellItemForm
 
 
 # class-based views
@@ -14,7 +14,7 @@ from django.views.generic import (
 	DeleteView,
 	FormView,
 	)
-from .models import PurchaseItem, SellItem
+from .models import Item, PurchaseItem, SellItem
 
 
 
@@ -47,13 +47,70 @@ class DashboardView(ListView):
 		context['sellItems'] = SellItem.objects.all()
 		return context
 
+### ITEM
+class ItemCreateView(LoginRequiredMixin, CreateView):		
+	model = Item
+	form_class = AddItemForm
+	template_name = 'core/ItemCreate.html'
+	success_message = "Item successfully added to list."
+	success_url = '/'		# using this takes the user to a specific page after posting instead of the item detail page
+
+	def form_valid(self, form):			# to automatically get the id of the current logged-in user as the owner
+		form.instance.owner = self.request.user 	# set the owner to the current logged-in user
+		return super().form_valid(form)
+
+
+class ItemDetailView(DetailView):
+	model = Item
+	template_name = 'core/ItemDetail.html'
+	items = Item.objects.all()
+	context = {
+		'items': items
+	}
+
+
+class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+	model = Item 
+	form_class = AddPurchaseItemForm	# forumPostForm was the one used in the tutorials
+	template_name = 'core/ItemUpdate.html'
+	success_message = "Item details updated"
+	success_url = '/'
+
+	def form_valid(self, form):			
+		form.instance.owner = self.request.user
+		return super().form_valid(form)
+
+	def test_func(self):
+		item = self.get_object()
+
+		if self.request.user == item.owner:
+			return True
+		return False
+
+
+class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):		
+	model = PurchaseItem
+	template_name = 'core/ItemConfirmDelete.html'
+	success_url = '/'
+
+	def form_valid(self, form):
+		form.instance.owner = self.request.user
+		return super().form_valid(form)
+
+	def test_func(self):
+		item = self.get_object()
+
+		if self.request.user == item.owner:
+			return True
+		return False
+
 
 
 ### PURCHASE
 class PurchaseItemCreateView(LoginRequiredMixin, CreateView):		
 	model = PurchaseItem
 	form_class = AddPurchaseItemForm
-	template_name = 'core/itemCreate.html'
+	template_name = 'core/PurchaseItemCreate.html'
 	success_message = "Item successfully added to list."
 	success_url = '/'		# using this takes the user to a specific page after posting instead of the item detail page
 
@@ -64,7 +121,7 @@ class PurchaseItemCreateView(LoginRequiredMixin, CreateView):
 
 class PurchaseItemDetailView(DetailView):
 	model = PurchaseItem
-	template_name = 'core/itemDetail.html'
+	template_name = 'core/PurchaseItemDetail.html'
 	purchaseItems = PurchaseItem.objects.all()
 	context = {
 		'purchaseItems': purchaseItems
@@ -74,12 +131,12 @@ class PurchaseItemDetailView(DetailView):
 class PurchaseItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 	model = PurchaseItem 
 	form_class = AddPurchaseItemForm	# forumPostForm was the one used in the tutorials
-	template_name = 'core/itemUpdate.html'
+	template_name = 'core/PurchaseItemUpdate.html'
 	success_message = "Item details updated"
 	success_url = '/'
 
 	def form_valid(self, form):			
-		form.instance.author = self.request.user
+		form.instance.owner = self.request.user
 		return super().form_valid(form)
 
 	def test_func(self):
@@ -92,7 +149,7 @@ class PurchaseItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
 
 class PurchaseItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):		
 	model = PurchaseItem
-	template_name = 'core/itemConfirmDelete.html'
+	template_name = 'core/PurchaseItemConfirmDelete.html'
 	success_url = '/'
 
 	def form_valid(self, form):
@@ -111,7 +168,7 @@ class PurchaseItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
 class SellItemCreateView(LoginRequiredMixin, CreateView):		
 	model = SellItem
 	form_class = AddSellItemForm
-	template_name = 'core/itemCreate.html'
+	template_name = 'core/SellItemCreate.html'
 	success_message = "Item successfully added to list."
 	success_url = '/'		# using this takes the user to a specific page after posting instead of the item detail page
 
@@ -122,7 +179,7 @@ class SellItemCreateView(LoginRequiredMixin, CreateView):
 
 class SellItemDetailView(DetailView):
 	model = SellItem
-	template_name = 'core/itemDetail.html'
+	template_name = 'core/SellItemDetail.html'
 	sellItems = SellItem.objects.all()
 	context = {
 		'sellItems': sellItems,
@@ -131,12 +188,12 @@ class SellItemDetailView(DetailView):
 class SellItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 	model = SellItem 
 	form_class = AddSellItemForm	# forumPostForm was the one used in the tutorials
-	template_name = 'core/itemUpdate.html'
+	template_name = 'core/SellItemUpdate.html'
 	success_message = "Item details updated"
 	success_url = '/'
 
 	def form_valid(self, form):			
-		form.instance.author = self.request.user
+		form.instance.owner = self.request.user
 		return super().form_valid(form)
 
 	def test_func(self):
@@ -149,7 +206,7 @@ class SellItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class SellItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):		
 	model = SellItem
-	template_name = 'core/itemConfirmDelete.html'
+	template_name = 'core/SellItemConfirmDelete.html'
 	success_url = '/'
 
 	def form_valid(self, form):

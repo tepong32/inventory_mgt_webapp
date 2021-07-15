@@ -1,34 +1,47 @@
 from django import forms
-from .models import PurchaseItem, SellItem, Category
+from .models import Item, PurchaseItem, SellItem, Category
 
 
+'''
+    If we need a dynamic Category objects list, we will implement these commented-out
+    lines. However, since we only have a fixed two-option field for purchase_type and
+    sell_type, I just hard-coded those options inside the Model.
 
-categories = Category.objects.all().values_list('name', 'name')
-categories_list = []
+    Should we decide to use this dynamic method, we still need to comment these lines
+    out on the first "makemigrations" command. Also, the server needs to be restarted
+    everytime instances of the Category class are added for them to be reflected as 
+    options on the form field.
+'''
 
-for item in categories:
-    categories_list.append(item)
+# categories = Category.objects.all().values_list('name', 'name')
+# categories_list = []
 
+# for item in categories:
+#     categories_list.append(item)
 
+class AddItemForm(forms.ModelForm):
+    class Meta:
+        model = Item
+        fields = ['name', 'supplier']
+
+        
 class AddPurchaseItemForm(forms.ModelForm):
-    name = forms.CharField(max_length=100)		# i think this can be removed since the same field is in the model?
 
     class Meta:
         model = PurchaseItem
         fields = "__all__"
-        exclude = ['owner', 'slug',]
-        widgets = {
-            'purchase_type' : forms.Select(choices=categories, attrs={'class': 'form-control'})
-        }
+        exclude = ['tag']
+        # widgets = {
+        #     'purchase_type' : forms.Select(choices=categories, attrs={'class': 'form-control'})
+        # }
 
 
 class AddSellItemForm(forms.ModelForm):
-    name = forms.CharField(max_length=100)
 
     class Meta:
         model = SellItem
         fields = "__all__"
-        exclude = ['owner', 'slug', ]
-        widgets = {
-            'sell_type' : forms.Select(choices=categories, attrs={'class': 'form-control'})
-        }
+        exclude = ['tag']
+        # widgets = {
+        #     'sell_type' : forms.Select(choices=categories, attrs={'class': 'form-control'})
+        # }
