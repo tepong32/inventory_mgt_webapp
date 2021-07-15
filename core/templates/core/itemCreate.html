@@ -11,8 +11,91 @@
           <!-- this is a required line for added security -->
           <fieldset class="form-group">
             <legend class="border-bottom mb-1">Add an Item</legend>
-            {{ form.media }}
-            {{ form|crispy }}
+            
+            
+              <!-- this block is equivalent to {{form.media}} {{form|crispy}} but was hard-coded -->
+              <div id="div_id_name" class="form-group">
+                <label for="id_name" class=" requiredField">Name<span class="asteriskField">*</span></label>
+                <div class="">
+                  <input type="text" name="name" maxlength="100" class="textinput textInput form-control" required id="id_name">
+                </div>
+              </div>
+              <div id="div_id_supplier" class="form-group">
+                <label for="id_supplier" class=" requiredField">Supplier<span class="asteriskField">*</span></label>
+                <div class="">
+                  <input type="text" name="supplier" value="---" maxlength="100" class="textinput textInput form-control" required id="id_supplier">
+                </div>
+              </div>
+              <div id="div_id_purchase_date" class="form-group">
+                <label for="id_purchase_date" class=" requiredField">Purchase date<span class="asteriskField">*</span> </label>
+                <div class="">
+                  <input type="text" name="purchase_date" class="dateinput form-control" required id="id_purchase_date">
+                </div>
+              </div>
+
+              <!-- good -->
+              <div id="div_id_purchase_type" class="input-group d-flex">
+                <label for="id_purchase_type" class=" requiredField">Purchase type<span class="asteriskField">*</span> </label>
+                <div class="col-6 ml-auto d-flex">
+                  <select name="purchase_type" class="form-control select form-control" maxlength="10" id="id_purchase_type">
+                    <option value="wholesale" selected>wholesale</option>
+                    <option value="retail">retail</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- good -->
+              <div id="div_id_purchase_price" class="input-group">
+                <label for="id_purchase_price" class=" requiredField">Purchase price<span class="asteriskField">*</span> </label>
+                <div class="col-6 ml-auto d-flex">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">$</span>
+                  </div>
+                  <input type="number" name="purchase_price" value="0" step="0.01" class="numberinput form-control text-right" required id="id_purchase_price">
+                  <div class="input-group-append">
+                    <span class="input-group-text">.00</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- good -->
+              <div id="div_id_purchased_qty" class="input-group">
+                <label for="id_purchased_qty" class=" requiredField">Purchased qty<span class="asteriskField">*</span> </label>
+                <div class="col-6 ml-auto d-flex">
+                  <input type="number" name="purchased_qty" value="0" class="numberinput form-control text-right" required id="id_purchased_qty">
+                  <div class="input-group-append">
+                    <span class="input-group-text">pcs</span>
+                  </div>
+                </div>
+              </div>
+
+              <div id="div_id_purchase_discount" class="input-group">
+                <label for="id_purchase_discount" class=" requiredField">Purchase discount<span class="asteriskField">*</span> </label>
+                <div class="col col-7 col-lg-6 ml-auto d-flex">
+                  <small id="hint_id_purchase_discount" class="form-text text-muted">Ex: 10.5% discount = 0.105</small>
+                  <input type="number" name="purchase_discount" value="0.00" step="0.001" class="numberinput form-control text-right" required id="id_purchase_discount">
+                  
+                </div>
+              </div>
+              <div id="div_id_notes" class="form-group"> <label for="id_notes" class="">Notes</label>
+                <div class="">
+                  <textarea name="notes" cols="40" rows="1" maxlength="255" class="textarea form-control" id="id_notes">
+                  </textarea>
+                </div>
+              </div>
+              <div id="div_id_thumbnail_image" class="form-group"> <label for="id_thumbnail_image" class="">Thumbnail image</label>
+                <div class="">
+                  <input type="file" name="thumbnail_image" accept="image/*" class="clearablefileinput form-control-file" id="id_thumbnail_image">
+                </div>
+              </div>
+              </fieldset>
+
+
+
+
+
+
+
           </fieldset>
 
           <div class="form-group">
@@ -24,3 +107,7 @@
   </div>
 </div>
 {% endblock content %}
+
+
+
+

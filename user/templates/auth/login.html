@@ -27,7 +27,7 @@
 	margin-top: 3em;
 	margin-bottom: auto;
 	width: 450px;
-	background-color: rgba(0,0,0,0.2) !important;
+	background-color: rgba(0,0,0,0.3) !important;
 	}
 
 	.social_icon span{
@@ -48,8 +48,9 @@
 	.social_icon{
 	position: absolute;
 	right: 20px;
-	top: -45px;
+	top: -25px;
 	}
+
 	.social_icon h6{
 		position: relative;
 		top: 55px;
@@ -101,8 +102,8 @@
 	margin-left: 4px;
 	}
 </style>
-<div class="container">
-	<div class="row justify-content-around h-100">
+
+	<div class="row justify-content-around">
 		<!-- 1st -->
 		<div class="card">
 			<div class="card-header">
@@ -112,7 +113,7 @@
 						<!-- create an a-tag to cover social_icon -->
 						<!-- <span><i class="fab fa-facebook-square"></i></span> -->
 					<a title="Google" class="socialaccount_provider google text-danger" href="/accounts/google/login/?process=login">
-						<span><i class="fa fa-google"></i></span>
+						<span><i class="fab fa-google"></i></span>
 					</a>
 					<!-- <a title="Facebook" class="socialaccount_provider facebook text-danger" href="#">
 						<span><i class="fa fa-facebook-square"></i></span>
@@ -151,14 +152,13 @@
 		</div>
 
 		<!-- 2nd -->
-		<div class="card p-3 text-justify text-sm quoteText">
-			<h4>Admin Recommendation:</h4>
-			<p> I personally prefer that you do the manual registration for your email addresses' protection. </p>
+		<div class="card p-3 text-sm quoteText">
+			<h4>Before you register:</h4>
+			<p> I personally prefer that you do the <b><a class="ml-2 mr-2" href="/register/"> manual registration</a></b> for your email addresses' protection. </p>
 			<p> It's not as if there was no protection in place on the website (it's with "https", dude!), it's more of an added security because I, as the owner/admin of the site,
 			will not send you emails, anyway. :) </p>
-			<p> I also want users to be as anonymous as they can be here so, they can express who they really are. </p>
-			<p> Email addresses are mostly for convenience of recovering accounts in case of forgotten passwords. Still, ...it's your choice. One-click Google registration is faster and you won't have to remember your password. :D </p>
+			<p> Email addresses are mostly for convenience of recovering accounts in case of forgotten passwords. Still, ...it's your choice. <b class="text-warning">One-click Google registration is faster and you won't have to remember your password. :D</b> </p>
 		</div>
 	</div>
-</div>
+
 {% endblock content %}
