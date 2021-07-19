@@ -7,111 +7,151 @@ from django.utils.text import slugify
 from django.db.models.functions import Lower
 
 
-class Category(models.Model):
-	name = models.CharField(max_length=50)
 
-	def __str__(self):
-		return self.name.title() # '.title()' to turn them all-caps
-
-
-class Item(models.Model):
-	'''
-	General attributes of each item.
-	This will just be the base-class where PurchaseItem and SellItem inherits their attributes.
-	No need to create actual instances.
-	'''
+class Product(models.Model):
 	owner = models.ForeignKey(User, on_delete=models.CASCADE)
 	name = models.CharField(max_length=50)
-	supplier = models.CharField(max_length=100, default="---")
-	slug = models.SlugField(max_length=150, verbose_name=('Item Slug'), default=name)
+	slug = models.SlugField(max_length=150, verbose_name=('entry slug'), default=name)
+	RETAIL = 'retail'
+	WHOLESALE = 'wholesale'
+	CUSTOM = 'custom-wholesale'
+	r_or_w_choices = (
+		(RETAIL, 'retail'),
+		(WHOLESALE, 'wholesale'),
+		(CUSTOM, 'custom-wholesale'),
+	)
+	product_type = models.CharField(
+        max_length=10,
+        choices=r_or_w_choices,
+        default=RETAIL, help_text='No discount = Retail, Percentage-based discount = Wholesale, Custom discount = Custom'
+    )
+
+	def __str__(self):
+		return self.name.title()
+	def get_absolute_url(self):
+		return reverse('product-detail', kwargs={'slug': self.slug})
+	def save(self, *args, **kwargs):
+		self.name = self.name.title()
+		self.slug = slugify(self.name + '-' + self.product_type)
+		super(Product, self).save(*args, **kwargs)
+
+
+class PurchaseProduct(models.Model):
+	'''
+	General attributes of each  Purchase entry based on the Product class.
+	'''
+	product = models.ForeignKey(Product, on_delete=models.CASCADE)
+	date = models.DateField()
+	qty = models.IntegerField(default=0)
+	slug = models.CharField(max_length=50, blank=True)
 	
-	# these should be defined inside the view
-	# def invested_capital(self):
-	# 	purchase_list = []
 
-	# def gross_profit(self):
-	# 	sell_list = []
+	# automatically determines the purchase price based on whether the purchase was retail or wholesale
+	#retail
+	r_price = models.DecimalField(max_digits=8, decimal_places=2, default=0, )
+	#wholesale
+	w_price = models.DecimalField(max_digits=8, decimal_places=2, default=0, )
+	w_discount = models.DecimalField(max_digits=4, decimal_places=3, default=0.0, help_text="Ex: 10.5% discount = 0.105")
+	#custom
+	c_price = models.DecimalField(max_digits=8, decimal_places=2, default=0, )
+	c_discount = models.DecimalField(max_digits=4, decimal_places=3, default=0.0, help_text="Ex: 10.5% discount = 0.105")
 
-	### important model defaults // modify as needed
-	def __str__(self):
-		return self.name
-	def get_absolute_url(self):
-		return reverse('detail-item', kwargs={'slug': self.slug})
-	def save(self, *args, **kwargs):
-		self.slug = slugify(self.name)
-		self.name = self.name.title()
-		super(Item, self).save(*args, **kwargs)
-
-
-class PurchaseItem(Item):
-	'''
-	Purchases details here
-	'''
-	tag = models.CharField(max_length=10, default='purchase')	# placeholder / used for filtering 
-	purchase_date = models.DateField()
-	RETAIL = 'Retail'
-	WHOLESALE = 'Wholesale'
-	purchase_type_choices = (
-		(RETAIL, 'retail'),
-		(WHOLESALE, 'wholesale')
-		)
-	purchase_type = models.CharField(
-        max_length=10,
-        choices=purchase_type_choices,
-        default=RETAIL,
-    )
-	purchase_type = models.CharField(max_length=10, default='wholesale')
-	r_purchase_price = models.DecimalField(max_digits=8, decimal_places=2, default=0, )
-	w_purchase_price = models.DecimalField(max_digits=8, decimal_places=2, default=0, )
-	purchased_qty = models.IntegerField(default=0)
-	purchase_discount = models.DecimalField(max_digits=4, decimal_places=3, default=0.0, help_text="Ex: 10.5% discount = 0.105")
 	def total_capital(self):
-		return int(self.purchase_price * self.purchased_qty)
+		if self.product_type == 'RETAIL':
+			return int(self.r_price * self.qty)
+		elif self.product_type == 'WHOLESALE':
+			return int(self.w_price * self.w_discount * self.qty)
+		else:
+			return int(self.c_price * self.qty - self.c_discount)
+
+
+	supplier = models.CharField(max_length=100, default="---")
 	notes = models.TextField(max_length=255, blank=True)
 
-	### important model defaults // modify as needed
 	def __str__(self):
-		return self.name
+		return str(self.name.title() + '-' + str(self.date) + '-purchase')
+
 	def get_absolute_url(self):
-		return reverse('detail-purchase', kwargs={'slug': self.slug})
+		return reverse('ppurchase-detail', kwargs={'slug': self.slug})
+
 	def save(self, *args, **kwargs):
-		self.slug = slugify(self.name + " " + str(self.purchase_date))
-		self.name = self.name.title()
-		super(PurchaseItem, self).save(*args, **kwargs)
+		self.slug = slugify(self.product.name + '-' + str(self.date))
+		super(PurchaseProduct, self).save(*args, **kwargs)
+	
+	
 
+class SellProduct(models.Model):
+	'''
+		General attributes of each  Sell entry based on the Product class.
+	'''
+	product = models.ForeignKey(Product, on_delete=models.CASCADE)
+	date = models.DateField()
+	qty = models.IntegerField(default=0)
 
-class SellItem(Item):
-	'''
-	Selling details here
-	'''
-	tag = models.CharField(max_length=10, default='sell')
-	sell_date = models.DateField()
-	RETAIL = 'Retail'
-	WHOLESALE = 'Wholesale'
-	sell_type_choices = (
-		(RETAIL, 'retail'),
-		(WHOLESALE, 'wholesale')
-		)
-	sell_type = models.CharField(
-        max_length=10,
-        choices=sell_type_choices,
-        default=RETAIL,
-    )
-	sell_type = models.CharField(max_length=10)
-	r_sell_price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
-	w_sell_price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
-	sold_qty = models.IntegerField(default=0)
-	selling_discount = models.DecimalField(max_digits=4, decimal_places=3, default=0.0, help_text="Ex: 10.5% discount = 0.105")
+	# automatically determines the purchase price based on whether the purchase was retail or wholesale
+	#retail
+	r_price = models.DecimalField(max_digits=8, decimal_places=2, default=0, )
+	#wholesale
+	w_price = models.DecimalField(max_digits=8, decimal_places=2, default=0, )
+	w_discount = models.DecimalField(max_digits=4, decimal_places=3, default=0.0, help_text="Ex: 10.5% discount = 0.105")
+	#custom
+	c_price = models.DecimalField(max_digits=8, decimal_places=2, default=0, )
+	c_discount = models.DecimalField(max_digits=4, decimal_places=3, default=0.0, help_text="Ex: 10.5% discount = 0.105")
+
 	def total_sales(self):
-		return int(self.sell_price * self.sold_qty)
+		if self.product_type == 'RETAIL':
+			return int(self.r_price * self.qty)
+		elif self.product_type == 'WHOLESALE':
+			return int(self.w_price * self.w_discount * self.qty)
+		else:
+			return int(self.c_price * self.qty - self.c_discount)
+
+
 	notes = models.TextField(max_length=255, blank=True)
 
 	### important model defaults // modify as needed
 	def __str__(self):
-		return self.name
+		return str(self.name.title() + '-' + self.date + '-sell')
+
+
+
+
+
+class Service(models.Model):
+	owner = models.ForeignKey(User, on_delete=models.CASCADE)
+	name = models.CharField(max_length=50)
+	slug = models.SlugField(max_length=150, verbose_name=('entry slug'), default=name)
+
+
+	def __str__(self):
+		return self.name.title()
 	def get_absolute_url(self):
-		return reverse('detail-sell', kwargs={'slug': self.slug})
+		return reverse('service-detail', kwargs={'slug': self.slug})
 	def save(self, *args, **kwargs):
-		self.slug = slugify(self.name + " " + str(self.sell_date))
 		self.name = self.name.title()
-		super(SellItem, self).save(*args, **kwargs)
+		self.slug = slugify(self.name)
+		super(Service, self).save(*args, **kwargs)
+
+
+class PurchaseService(models.Model):
+	service = models.ForeignKey(Service, on_delete=models.CASCADE)
+	date = models.DateField()
+	price = models.DecimalField(max_digits=8, decimal_places=2, default=0, )
+	qty = models.IntegerField(default=1)
+
+	def total_capital(self):
+		return set(self.price * self.qty)
+
+	def __str__(self):
+		return str(self.name.title() + '-' + self.date + '-purchase')
+		
+
+class SellService(models.Model):
+	service = models.ForeignKey(Service, on_delete=models.CASCADE)
+	date = models.DateField()
+	price = models.DecimalField(max_digits=8, decimal_places=2, default=0, )
+	qty = models.IntegerField(default=1)
+
+
+	def __str__(self):
+		return str(self.name.title() + '-' + self.date + '-purchase')

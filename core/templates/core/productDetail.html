@@ -1,0 +1,24 @@
+{% extends 'home/index.html' %}
+
+{% block content %}
+
+
+Item DETAIL page<br>
+{{object.name}} <br>
+{{object.product_type}} <br>
+{{object.supplier}}
+<hr>
+<a href="{% url 'add-ppurchase' object.name %}">+purchase</a>
+<a href="#">+sell</a>
+
+<hr>
+
+{% for item in ppurchases %}
+	{{item.product.name}} <br>
+	<a href="#">{{item.slug}}</a> <br>
+	{{item.date}} <br>
+	{{item.qty}} <hr>
+{% endfor %}
+
+
+{% endblock content%}

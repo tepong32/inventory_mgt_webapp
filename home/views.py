@@ -1,17 +1,17 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from core.models import PurchaseItem, SellItem
+from core.models import Product, Service, PurchaseProduct
 from django.contrib.auth.models import User
 
 
 @login_required
 def home(request):
 	user = User
-	purchaseItems = PurchaseItem.objects.all().order_by('purchase_date')
-	sellItems = SellItem.objects.all().order_by('-sell_date')
+	products = Product.objects.all().order_by('name')
+	services = Service.objects.all().order_by('name')
 	context = {
-		'purchaseItems': purchaseItems,
-		'sellItems': sellItems,
+		'products': products,
+		'services': services,
 		'user': user,
 	}
 

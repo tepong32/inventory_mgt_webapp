@@ -2,10 +2,10 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
-from .forms import AddItemForm, AddPurchaseItemForm, AddSellItemForm
+from .forms import AddProductForm, PurchaseProductForm 
 
 
-# class-based views
+# generic class-based views where we get inheritance from
 from django.views.generic import (
 	ListView,
 	DetailView,
@@ -14,14 +14,23 @@ from django.views.generic import (
 	DeleteView,
 	FormView,
 	)
-from .models import Item, PurchaseItem, SellItem
+
+from .models import (
+	Product,
+	PurchaseProduct,
+	SellProduct,
+	Service,
+	PurchaseService,
+	SellService
+	) # or 'import *'
+
 
 
 
 # @login_required
 class DashboardView(ListView):
 	# context_object_name = 'Items'
-	queryset = PurchaseItem.objects.all()
+	queryset = Product.objects.all()
 	template_name = 'core/dashboard.html'
 	ordering = 'name'	# see if this works as an alphabetical filter
 	paginate_by = 15
@@ -43,38 +52,59 @@ class DashboardView(ListView):
 		# context['school'] = Item.objects.filter(tag="School").order_by('-date_posted')
 		# context['social'] = Item.objects.filter(tag="Social").order_by('-date_posted')
 
-		context['purchaseItems'] = PurchaseItem.objects.all()
-		context['sellItems'] = SellItem.objects.all()
+		context['products'] = Product.objects.all()
+		context['services'] = Service.objects.all()
+
 		return context
 
-### ITEM
-class ItemCreateView(LoginRequiredMixin, CreateView):		
-	model = Item
-	form_class = AddItemForm
-	template_name = 'core/ItemCreate.html'
-	success_message = "Item successfully added to list."
-	success_url = '/'		# using this takes the user to a specific page after posting instead of the item detail page
+### PRODUCT
+class ProductDetailView(DetailView):
+	model = Product
+	template_name = 'core/productDetail.html'
+	# pproducts = PurchaseProduct.objects.all()
+	# context = {
+	# 	'pproducts': pproducts
+	# }
+
+	def get_context_data(self, **kwargs):
+		context = super(ProductDetailView, self).get_context_data(**kwargs)
+		# '''
+		# 	This function was used to override the "context" variable on the class-based view.
+		# 	Think of this as a way of doing 
+		# 	context = { 'xxx': xxx.objects.all(),
+		# 				'yyy': yyy.objects.all()
+		# 				}
+		# 	in a function-based view.
+		# '''
+		# context['entertainment'] = Item.objects.filter(tag="Entertainment").order_by('-date_posted')
+		# context['help'] = Item.objects.filter(tag="Help!").order_by('-date_posted')
+		# context['hobby'] = Item.objects.filter(tag="Hobby").order_by('-date_posted')
+		# context['jokes'] = Item.objects.filter(tag="Jokes").order_by('-date_posted')
+		# context['school'] = Item.objects.filter(tag="School").order_by('-date_posted')
+		# context['social'] = Item.objects.filter(tag="Social").order_by('-date_posted')
+
+		context['ppurchases'] = PurchaseProduct.objects.all()
+		context['psells'] = SellProduct.objects.all()
+
+		return context
+
+class ProductCreateView(LoginRequiredMixin, CreateView):
+	model = Product
+	form_class = AddProductForm
+	template_name = 'core/addProduct.html'
+	success_message = 'Entry created'
+	# success_url = '/'
 
 	def form_valid(self, form):			# to automatically get the id of the current logged-in user as the owner
 		form.instance.owner = self.request.user 	# set the owner to the current logged-in user
 		return super().form_valid(form)
 
-
-class ItemDetailView(DetailView):
-	model = Item
-	template_name = 'core/ItemDetail.html'
-	items = Item.objects.all()
-	context = {
-		'items': items
-	}
-
-
-class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-	model = Item 
-	form_class = AddPurchaseItemForm	# forumPostForm was the one used in the tutorials
-	template_name = 'core/ItemUpdate.html'
-	success_message = "Item details updated"
-	success_url = '/'
+class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+	model = Product 
+	form_class = AddProductForm
+	template_name = 'core/updateProduct.html'
+	success_message = "Product updated"
+	# success_url = '/'
 
 	def form_valid(self, form):			
 		form.instance.owner = self.request.user
@@ -87,10 +117,9 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 			return True
 		return False
 
-
-class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):		
-	model = PurchaseItem
-	template_name = 'core/ItemConfirmDelete.html'
+class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):		
+	model = Product
+	template_name = 'core/confirmProductDelete.html'
 	success_url = '/'
 
 	def form_valid(self, form):
@@ -106,34 +135,39 @@ class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 
-### PURCHASE
-class PurchaseItemCreateView(LoginRequiredMixin, CreateView):		
-	model = PurchaseItem
-	form_class = AddPurchaseItemForm
-	template_name = 'core/PurchaseItemCreate.html'
-	success_message = "Item successfully added to list."
-	success_url = '/'		# using this takes the user to a specific page after posting instead of the item detail page
+# product purchases
+class AddPPurchase(LoginRequiredMixin, CreateView):		
+	model = PurchaseProduct
+	form_class = PurchaseProductForm
+	template_name = 'core/addPPurchase.html'
+	success_message = "Line entry added"
+	success_url = '/'
 
 	def form_valid(self, form):			# to automatically get the id of the current logged-in user as the owner
 		form.instance.owner = self.request.user 	# set the owner to the current logged-in user
 		return super().form_valid(form)
 
-
-class PurchaseItemDetailView(DetailView):
-	model = PurchaseItem
-	template_name = 'core/PurchaseItemDetail.html'
-	purchaseItems = PurchaseItem.objects.all()
+class PPurchaseDetail(DetailView):
+	model = PurchaseProduct
+	template_name = 'core/pproductDetail.html'
+	pproducts = PurchaseProduct.objects.all()
 	context = {
-		'purchaseItems': purchaseItems
+		'pproducts': pproducts
 	}
 
+	def get_context_data(self, **kwargs):
+		context = super(ProductDetailView, self).get_context_data(**kwargs)
+		context['ppurchases'] = PurchaseProduct.objects.all()
+		context['psells'] = SellProduct.objects.all()
 
-class PurchaseItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-	model = PurchaseItem 
-	form_class = AddPurchaseItemForm	# forumPostForm was the one used in the tutorials
-	template_name = 'core/PurchaseItemUpdate.html'
-	success_message = "Item details updated"
-	success_url = '/'
+		return context
+
+class UpdatePPurchase(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+	model = PurchaseProduct 
+	form_class = AddProductForm
+	template_name = 'core/updatePPurchase.html'
+	success_message = "Product updated"
+	# success_url = '/'
 
 	def form_valid(self, form):			
 		form.instance.owner = self.request.user
@@ -147,9 +181,9 @@ class PurchaseItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
 		return False
 
 
-class PurchaseItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):		
-	model = PurchaseItem
-	template_name = 'core/PurchaseItemConfirmDelete.html'
+class DeletePPurchase(LoginRequiredMixin, UserPassesTestMixin, DeleteView):		
+	model = PurchaseProduct
+	template_name = 'core/confirmProductDelete.html'
 	success_url = '/'
 
 	def form_valid(self, form):
@@ -164,33 +198,24 @@ class PurchaseItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
 		return False
 
 
-### SELL
-class SellItemCreateView(LoginRequiredMixin, CreateView):		
-	model = SellItem
-	form_class = AddSellItemForm
-	template_name = 'core/SellItemCreate.html'
-	success_message = "Item successfully added to list."
-	success_url = '/'		# using this takes the user to a specific page after posting instead of the item detail page
+# product sells
+class AddPSell(LoginRequiredMixin, CreateView):		
+	model = SellProduct
+	form_class = PurchaseProductForm
+	template_name = 'core/addPSell.html'
+	success_message = "Line entry added"
+	# success_url = '/'
 
 	def form_valid(self, form):			# to automatically get the id of the current logged-in user as the owner
 		form.instance.owner = self.request.user 	# set the owner to the current logged-in user
 		return super().form_valid(form)
 
-
-class SellItemDetailView(DetailView):
-	model = SellItem
-	template_name = 'core/SellItemDetail.html'
-	sellItems = SellItem.objects.all()
-	context = {
-		'sellItems': sellItems,
-	}
-
-class SellItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-	model = SellItem 
-	form_class = AddSellItemForm	# forumPostForm was the one used in the tutorials
-	template_name = 'core/SellItemUpdate.html'
-	success_message = "Item details updated"
-	success_url = '/'
+class UpdatePSell(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+	model = SellProduct 
+	form_class = AddProductForm
+	template_name = 'core/updatePSell.html'
+	success_message = "Product updated"
+	# success_url = '/'
 
 	def form_valid(self, form):			
 		form.instance.owner = self.request.user
@@ -204,9 +229,9 @@ class SellItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 		return False
 
 
-class SellItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):		
-	model = SellItem
-	template_name = 'core/SellItemConfirmDelete.html'
+class DeletePSell(LoginRequiredMixin, UserPassesTestMixin, DeleteView):		
+	model = SellProduct
+	template_name = 'core/confirmProductDelete.html'
 	success_url = '/'
 
 	def form_valid(self, form):
@@ -219,3 +244,4 @@ class SellItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 		if self.request.user == item.owner:
 			return True
 		return False
+

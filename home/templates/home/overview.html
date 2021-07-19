@@ -4,19 +4,19 @@
       <a class="nav-link active" id="custom-content-above-home-tab" data-toggle="pill" href="#custom-content-above-home" role="tab" aria-controls="custom-content-above-home" aria-selected="true">Net Values</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="custom-content-above-profile-tab" data-toggle="pill" href="#custom-content-above-profile" role="tab" aria-controls="custom-content-above-profile" aria-selected="false">Purchase</a>
+      <a class="nav-link" id="custom-content-above-profile-tab" data-toggle="pill" href="#custom-content-above-profile" role="tab" aria-controls="custom-content-above-profile" aria-selected="false">Product</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="custom-content-above-messages-tab" data-toggle="pill" href="#custom-content-above-messages" role="tab" aria-controls="custom-content-above-messages" aria-selected="false">Sell</a>
+      <a class="nav-link" id="custom-content-above-messages-tab" data-toggle="pill" href="#custom-content-above-messages" role="tab" aria-controls="custom-content-above-messages" aria-selected="false">Services</a>
     </li>
   </ul>
   <div class="tab-custom-content d-flex">
     <i class="lead p-2">Summary</i>
     <div class="card-tools p-2">
-      <a href="/items/p/add" class="btn btn-tool btn-sm btn-danger">
+      <a href="/items/add-product/" class="btn btn-tool btn-sm btn-danger">
         <i class="fa fa-plus text-dark"> Purchase entry</i>
       </a>
-      <a href="/items/s/add" class="btn btn-tool btn-sm btn-success">
+      <a href="#" class="btn btn-tool btn-sm btn-success">
         <i class="fa fa-plus text-dark"> Sell entry</i>
       </a>
     </div>
@@ -97,57 +97,58 @@
           </tr>
           </thead>
           <tbody>
+            {% for product in products %}
           <tr>
+            
             <!-- 1 -->
             <td>
-              {% if puchaseItems != Null %}
-              {% for item in purchaseItems %}
-              <a href="{% url 'detail-purchase' item.slug %}">{{item.name}}</a>
+              
+              <a href="{% url 'product-detail' product.slug %}">{{product.name}}</a>
             </td>
             <!-- 2 -->
             <td>
-              {{item.purchase_price}}
+              {{product.price}}
             </td>
             <!-- 3 -->
             <td>
-              {{item.purchased_qty}}
+              {{product.qty}}
             </td>
             <!-- 4 -->
             <td>
               <a href="#" class="text-muted">
-                <i>{{item.total_capital}}</i>
+                <i>{{product.total_capital}}</i>
               </a>
             </td>
             <!-- 5 -->
             <td>
               <a href="#" class="text-muted">
-                <i>{{item.purchase_type}}</i>
+                <i>{{product.purchase_type}}</i>
               </a>
             </td>
             <!-- 6 -->
             <td>
               <a href="#" class="text-muted">
-                <i>{{item.supplier}}</i>
+                <i>{{product.supplier}}</i>
               </a>
             </td>
             <!-- 7 -->
             <td>
               <a href="#" class="text-muted">
-                <i>{{item.purchase_date|date:"c"}}</i>
+                <i>{{product.date|date:"c"}}</i>
               </a>
             </td>
+            <!-- 8 -->
             <td>
               <a href="#" class="text-muted">
-                <small>{{item.notes}}</small>
+                <small>{{product.product_type}}</small>
               </a>
+              
             </td>
+            
           </tr>
-          <tr>
-            {% endfor %}
-            {% endif %}
+          {% endfor %}
               
           </tbody>
-            }
         </table>
       </div>
       <!-- /purchase content -->
@@ -222,7 +223,6 @@
             {% endif %}
               
           </tbody>
-            }
         </table>
       </div>
       <!-- /sell content -->

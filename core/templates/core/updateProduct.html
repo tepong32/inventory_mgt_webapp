@@ -12,6 +12,7 @@
           <fieldset class="form-group">
             <legend class="border-bottom mb-1">Update Item entry</legend>
             
+              {% comment 'form.media block for the meantime' %}
               <!-- this block is equivalent to {{form.media}} {{form|crispy}} but was hard-coded -->
               <div id="div_id_name" class="form-group">
                 <label for="id_name" class=" requiredField">Name<span class="asteriskField">*</span></label>
@@ -25,7 +26,11 @@
                   <input type="text" name="supplier" value="---" maxlength="100" class="textinput textInput form-control" required id="id_supplier">
                 </div>
               </div>
-              
+              {% endcomment %}
+
+              {% form.media %}
+              {{form|crispy}}
+
           </fieldset>
 
           <div class="form-group">

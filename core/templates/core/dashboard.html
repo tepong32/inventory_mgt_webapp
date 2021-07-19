@@ -2,9 +2,15 @@
 {% block content %}
 	<h1>This line is from core/dashboard.html</h1>
 	items will be listed here <hr>
-	{% for item in items %}
-		<a href="{% url 'item-detail' item.slug %}">{{item.name}}</a> <br>
-		{{item.stock_quantity}}
+	{% for product in products %}
+		<a href="{% url 'product-detail' product.slug %}">{{product.name}}</a> <br>
+		{{product.product_type}}
+		<hr>
+	{% endfor %}
+
+	{% for service in services %}
+		<a href="{% url 'product-detail' product.slug %}">{{service.name}}</a> <br>
+		{{service.date}} / {{service.price}}
 		<hr>
 	{% endfor %}
 {% endblock content%}
