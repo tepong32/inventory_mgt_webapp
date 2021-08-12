@@ -21,13 +21,13 @@ class Product(models.Model):
 		(CUSTOM, 'custom-wholesale'),
 	)
 	product_type = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=r_or_w_choices,
         default=RETAIL, help_text='No discount = Retail, Percentage-based discount = Wholesale, Custom discount = Custom'
     )
 
 	def __str__(self):
-		return self.name.title()
+		return str(self.name.title() + '/' + self.product_type.title())
 	def get_absolute_url(self):
 		return reverse('product-detail', kwargs={'slug': self.slug})
 	def save(self, *args, **kwargs):

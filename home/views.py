@@ -20,4 +20,4 @@ def home(request):
 
 
 
-	return render(request, 'home/index.html', context)
+	return render(request, 'home/overview.html', context)

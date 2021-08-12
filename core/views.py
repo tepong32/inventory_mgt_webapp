@@ -87,8 +87,9 @@ class ProductDetailView(DetailView):
 		context['psells'] = SellProduct.objects.all()
 
 		return context
-
-class ProductCreateView(LoginRequiredMixin, CreateView):
+		
+from sweetify.views import SweetifySuccessMixin
+class ProductCreateView(LoginRequiredMixin, SweetifySuccessMixin, CreateView):
 	model = Product
 	form_class = AddProductForm
 	template_name = 'core/addProduct.html'
@@ -98,6 +99,8 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 	def form_valid(self, form):			# to automatically get the id of the current logged-in user as the owner
 		form.instance.owner = self.request.user 	# set the owner to the current logged-in user
 		return super().form_valid(form)
+
+
 
 class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 	model = Product 

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     ## third-party apps
     'adminlte3',
     'adminlte3_theme',
+    'sweetify',
 
     'crispy_forms',
     'ckeditor',
@@ -64,6 +65,9 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount.providers.twitter',
     # add more if you wish to
 ]
+
+# sweetify library
+SWEETIFY_SWEETALERT_LIBRARY = 'sweetalert2'
 
 # django-allauth needs this
 SITE_ID = 1

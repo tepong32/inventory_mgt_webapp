@@ -1,6 +1,6 @@
-{% extends 'user/users_base.html' %}
-<!-- notice the extends -->
-{% load crispy_forms_tags %} {% block profile %}
+{% extends 'home/index.html' %}
+
+{% load crispy_forms_tags %} {% block content %}
 
 <div class="container col-8 bg-dark" style="padding-top: 1em">
   <!-- FORM HERE -->
@@ -32,6 +32,6 @@
 </div>
 
 
-{% endblock profile %}
+{% endblock content %}
 
 
